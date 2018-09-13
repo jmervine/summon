@@ -18,6 +18,7 @@ type ActionConfig struct {
 	Provider    string
 	Filepath    string
 	YamlInline  string
+	Output      string
 	Subs        map[string]string
 	Ignores     []string
 	IgnoreAll   bool
@@ -27,7 +28,7 @@ type ActionConfig struct {
 const ENV_FILE_MAGIC = "@SUMMONENVFILE"
 
 var Action = func(c *cli.Context) {
-	if !c.Args().Present() {
+	if !c.Args().Present() && c.String("output") == "" {
 		fmt.Println("Enter a subprocess to run!")
 		os.Exit(127)
 	}
@@ -44,6 +45,7 @@ var Action = func(c *cli.Context) {
 		Environment: c.String("environment"),
 		Filepath:    c.String("f"),
 		YamlInline:  c.String("yaml"),
+		Output:      c.String("output"),
 		Ignores:     c.StringSlice("ignore"),
 		IgnoreAll:   c.Bool("ignore-all"),
 		Subs:        convertSubsToMap(c.StringSlice("D")),
@@ -130,6 +132,26 @@ EnvLoop:
 			}
 			return fmt.Errorf("Error fetching variable %v: %v", envvar.string, envvar.error.Error())
 		}
+	}
+
+	if ac.Output != "" {
+		o, err := os.Create(ac.Output)
+		if err != nil {
+			return err
+		}
+
+		defer o.Close()
+
+		for _, ele := range env {
+			_, err := o.Write([]byte(ele + "\n"))
+			if err != nil {
+				return err
+			}
+
+			o.Sync()
+		}
+
+		return nil
 	}
 
 	setupEnvFile(ac.Args, env, &tempFactory)

@@ -27,6 +27,10 @@ var Flags = []cli.Flag{
 		Name:  "yaml",
 		Usage: "secrets.yml as a literal string",
 	},
+	cli.StringFlag{
+		Name:  "output, o",
+		Usage: "write results out to a file in 'env' format and exit without executing a command",
+	},
 	cli.StringSliceFlag{
 		Name:  "ignore, i",
 		Value: &cli.StringSlice{},

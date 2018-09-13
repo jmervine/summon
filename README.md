@@ -112,6 +112,16 @@ the secrets stored in temp files and in the Python process environment are gone.
     summon -D ENV=production --yaml 'SQL_PASSWORD: !var env/$ENV/db-password' deploy.sh
     ```
 
+* `-o, --output` Output results to a file
+
+    This flag can be useful for saving the results to a file for later use. For example with [godotenv](https://github.com/joho/godotenv).
+
+    Output format is in the form of environment variables
+    ```
+    FOO=bar
+    BAH=boo
+    ```
+
 * `-i, --ignore` A secret path for which to ignore provider errors
 
     This flag can be useful for when you have secrets that you don't need access to for development. For example API keys for monitoring tools. This flag can be used multiple times.
